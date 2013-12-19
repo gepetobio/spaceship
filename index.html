@@ -1,0 +1,81 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title></title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width">
+
+	<style>
+		#canvas {
+			background: #000;
+		}
+	</style>
+
+	<script src="js/libs/modernizr-2.5.3.min.js"></script>
+</head>
+<body>
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+	<canvas id="canvas" width="1024" height="600"></canvas>
+	<script src="./includes/utils.js"></script>
+	<script src="./classes/ship.js"></script>
+	<script>
+		window.onload = function () {
+			var canvas = document.getElementById('canvas'),
+				context = canvas.getContext('2d'),
+				ship = new Ship(),
+				vr = 0,
+				vx = 0,
+				vy = 0,
+				thrust = 0;
+
+			ship.x = canvas.width / 2;
+			ship.y = canvas.height /2;
+
+			window.addEventListener('keydown', function (event) {
+				switch (event.keyCode) {
+					case 37: //left
+						vr = -3;
+						break;
+					case 39: //right
+						vr = 3;
+						break;
+					case 38: // up
+						thrust = 0.05;
+						ship.showFlame = true;
+						break;
+				}
+			}, false);
+
+			window.addEventListener('keyup', function () {
+					vr = 0;
+					thrust = 0;
+					ship.showFlame = false;
+			}, false);
+
+			(function drawFrame () {
+				window.requestAnimationFrame(drawFrame, canvas);
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				ship.rotation += vr * Math.PI / 180;
+				var angle = ship.rotation, //radians
+					ax = Math.cos(angle) * thrust,
+					ay = Math.sin(angle) * thrust;
+
+				vx += ax;
+				vy += ay;
+				ship.x += vx;
+				ship.y += vy;
+				ship.draw(context);
+			}());
+		};
+	</script>
+
+</body>
+</html>
